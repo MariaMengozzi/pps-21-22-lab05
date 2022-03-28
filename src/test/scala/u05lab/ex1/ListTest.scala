@@ -26,4 +26,8 @@ class ListTest {
   @Test
   def testSpan2(): Unit =
     assertEquals((List(1, 2), List(3, 4)), reference.span(_ < 3))
+
+  @Test
+  def testSpan3(): Unit =
+    assertEquals((List(1, 2, 3), List(4)), reference.span(_ == 3))
 }

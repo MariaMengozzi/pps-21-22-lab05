@@ -78,7 +78,8 @@ enum List[A]:
     _zipRight(this, 0, Nil())
 
   def partition(pred: A => Boolean): (List[A], List[A]) =
-    (this.filter(pred(_)), filter(!pred(_)))
+    this.foldRight((Nil(), Nil()))((e, out) => if pred(e) then (e :: out._1, out._2) else (out._1, e :: out._2))
+    //(this.filter(pred(_)), filter(!pred(_)))
 
   def recoursivePartition(pred: A => Boolean): (List[A], List[A]) =
     def _partition (l: List[A], pred: A => Boolean, out: (List[A], List[A])): (List[A], List[A]) = l match
@@ -93,14 +94,21 @@ enum List[A]:
     case h :: t => t.contains(value)
     case _ => false
 
-  def span(pred: A => Boolean): (List[A], List[A]) =
-    //TODO correct span
+  def spanRecoursive(pred: A => Boolean): (List[A], List[A]) =
     def _span (l: List[A], pred: A => Boolean, out: (List[A], List[A])): (List[A], List[A]) = l match
-      case h :: t if pred(h)  => _span(t, pred, (h :: out._1, out._2))
-      //todo collect elements before satisfying predicate
-      case _ => (out._1.reverse(), out._2.append(l))
+      case h :: t if (pred(out._1.get(out._1.length-1).get) && !pred(h)) => (out._1, out._2.append(l))
+      case h :: t => _span(t, pred, (out._1.append(h :: Nil()), out._2))
+      case _ => out
 
-    _span(this, pred, (Nil(), Nil()))
+    _span(this.tail.get, pred, (this.head.get :: Nil(), Nil()))
+
+  def span(pred: A => Boolean): (List[A], List[A]) =
+    this.foldLeft((Nil(), Nil()))((out, e) =>
+      if ((out._1 != Nil() && pred(out._1.get(out._1.length-1).get) && !pred(e))) || out._2 != Nil() then
+        (out._1, out._2.append(e :: Nil()))
+      else
+        (out._1.append(e :: Nil()), out._2)
+    )
 
   /** @throws UnsupportedOperationException if the list is empty */
   def reduce(op: (A, A) => A): A = ???
