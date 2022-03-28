@@ -2,6 +2,8 @@ package u05lab.ex1
 
 import u05lab.ex1.List
 
+import scala.annotation.tailrec
+
 // Ex 1. implement the missing methods both with recursion or with using fold, map, flatMap, and filters
 // List as a pure interface
 enum List[A]:
@@ -20,6 +22,9 @@ enum List[A]:
   def append(list: List[A]): List[A] = this match
     case h :: t => h :: t.append(list)
     case _ => list
+
+  def appendWithFold(list: List[A]): List[A] =
+    foldRight(list)(_ :: _) //foldRight(list)((a, l) => a :: l)
 
   def foreach(consumer: A => Unit): Unit = this match
     case h :: t => consumer(h); t.foreach(consumer)
@@ -42,6 +47,7 @@ enum List[A]:
   def flatMap[B](f: A => List[B]): List[B] =
     foldRight[List[B]](Nil())(f(_) append _)
 
+  //consistono in delle iterazioni con accumulatore
   def foldLeft[B](z: B)(op: (B, A) => B): B = this match
     case h :: t => t.foldLeft(op(z, h))(op)
     case Nil() => z
@@ -58,12 +64,43 @@ enum List[A]:
 
   def reverse(): List[A] = foldLeft[List[A]](Nil())((l, e) => e :: l)
 
+  def allMatch(predicate: A => Boolean): Boolean = this match
+    case Nil() => true
+    case h :: t if predicate(h) => t.allMatch(predicate)
+    case _ => false
+
   /** EXERCISES */
-  def zipRight: List[(A, Int)] = ???
+  def zipRight: List[(A, Int)] =
+    def _zipRight(l: List[A], i: Int, out: List[(A, Int)]): List[(A, Int)] = l match
+      case h :: t =>  out.append((h, i) :: _zipRight(t, i+1, out))
+      case _ => Nil()
 
-  def partition(pred: A => Boolean): (List[A], List[A]) = ???
+    _zipRight(this, 0, Nil())
 
-  def span(pred: A => Boolean): (List[A], List[A]) = ???
+  def partition(pred: A => Boolean): (List[A], List[A]) =
+    (this.filter(pred(_)), filter(!pred(_)))
+
+  def recoursivePartition(pred: A => Boolean): (List[A], List[A]) =
+    def _partition (l: List[A], pred: A => Boolean, out: (List[A], List[A])): (List[A], List[A]) = l match
+      case h :: t if pred(h) => _partition(t, pred, (h :: out._1, out._2))
+      case h :: t if !pred(h) => _partition(t, pred, (out._1, h:: out._2))
+      case _ => (out._1.reverse(), out._2.reverse())
+
+    _partition(this, pred, (Nil(), Nil()))
+
+  def contains(value: A): Boolean = this match
+    case h :: t if h == value => true
+    case h :: t => t.contains(value)
+    case _ => false
+
+  def span(pred: A => Boolean): (List[A], List[A]) =
+    //TODO correct span
+    def _span (l: List[A], pred: A => Boolean, out: (List[A], List[A])): (List[A], List[A]) = l match
+      case h :: t if pred(h)  => _span(t, pred, (h :: out._1, out._2))
+      //todo collect elements before satisfying predicate
+      case _ => (out._1.reverse(), out._2.append(l))
+
+    _span(this, pred, (Nil(), Nil()))
 
   /** @throws UnsupportedOperationException if the list is empty */
   def reduce(op: (A, A) => A): A = ???
@@ -80,6 +117,14 @@ object List:
 
   def of[A](elem: A, n: Int): List[A] =
     if n == 0 then Nil() else elem :: of(elem, n - 1)
+
+  def allPositive(l: List[Int]): Boolean = l match
+    case Nil() => true
+    case h :: t if h > 0 => allPositive(t)
+    case _ => false
+
+  def allPositiveWithAllMatch(l: List[Int]): Boolean = l.allMatch(_ > 0)
+
 
 @main def checkBehaviour(): Unit =
   val reference = List(1, 2, 3, 4)
