@@ -115,7 +115,13 @@ enum List[A]:
     case h :: t => t.foldLeft(h)(op)
     case Nil() => throw new UnsupportedOperationException
 
-  def takeRight(n: Int): List[A] = ???
+  def takeRightRecursive(n: Int): List[A] = this.reverse() match
+    case h :: t if (n > 0) => t.reverse().takeRightRecursive(n-1).append(h :: Nil())
+    case _ => Nil()
+
+  def takeRight(n: Int): List[A] =
+    this.zipRight.foldRight(Nil())((e, s) => if e._2 > this.length - 1 - n then e._1 :: s else s)
+
 
 // Factories
 object List:
@@ -146,4 +152,4 @@ object List:
   try Nil.reduce[Int](_ + _)
   catch case ex: Exception => println(ex) // prints exception
   println(List(10).reduce(_ + _)) // 10
-  println(reference.takeRight(3)) // List(2, 3, 4)
+  //println(reference.takeRight(3)) // List(2, 3, 4)

@@ -42,4 +42,12 @@ class ListTest {
    @Test
   def testReduceOnNil(): Unit =
      assertThrows(classOf[UnsupportedOperationException], () => Nil.reduce[Int](_ + _))
+
+  @Test
+  def testTakeRightRecursive(): Unit =
+    assertEquals(List(2, 3, 4), reference.takeRightRecursive(3))
+
+  @Test
+  def testTakeRight(): Unit =
+    assertEquals(List(2, 3, 4), reference.takeRight(3))
 }
