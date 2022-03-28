@@ -125,6 +125,9 @@ enum List[A]:
   def takeRight(n: Int): List[A] =
     this.zipRight.foldRight(Nil())((e, s) => if e._2 > this.length - 1 - n then e._1 :: s else s)
 
+  def collect[B](pf: PartialFunction[A,B]): List[B] =
+    this.filter(pf.isDefinedAt(_)).map(pf)
+
 
 // Factories
 object List:

@@ -50,4 +50,8 @@ class ListTest {
   @Test
   def testTakeRight(): Unit =
     assertEquals(List(2, 3, 4), reference.takeRight(3))
+
+  @Test
+  def testCollect(): Unit =
+    assertEquals(List(12, 14), reference.collect({ case x if x % 2 == 0 => x + 10 }))
 }
