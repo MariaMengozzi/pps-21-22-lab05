@@ -111,7 +111,9 @@ enum List[A]:
     )
 
   /** @throws UnsupportedOperationException if the list is empty */
-  def reduce(op: (A, A) => A): A = ???
+  def reduce(op: (A, A) => A): A = this match
+    case h :: t => t.foldLeft(h)(op)
+    case Nil() => throw new UnsupportedOperationException
 
   def takeRight(n: Int): List[A] = ???
 

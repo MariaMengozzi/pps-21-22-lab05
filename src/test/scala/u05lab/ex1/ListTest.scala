@@ -30,4 +30,16 @@ class ListTest {
   @Test
   def testSpan3(): Unit =
     assertEquals((List(1, 2, 3), List(4)), reference.span(_ == 3))
+
+  @Test
+  def testReduceOnMoreElements(): Unit =
+    assertEquals(10, reference.reduce(_ + _))
+
+  @Test
+  def testReduceOnOneElement(): Unit =
+    assertEquals(10, List(10).reduce(_ + _))
+
+   @Test
+  def testReduceOnNil(): Unit =
+     assertThrows(classOf[UnsupportedOperationException], () => Nil.reduce[Int](_ + _))
 }
