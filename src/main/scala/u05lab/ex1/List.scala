@@ -78,7 +78,7 @@ enum List[A]:
     _zipRight(this, 0, Nil())
 
   def zipRight: List[(A, Int)] =
-    this.foldLeft(Nil())((s, e) => s.append((e , s.length-1+ 1) :: Nil()))
+    this.foldLeft((Nil[(A, Int)](), 0))((acc, elem) => ((elem, acc._2) :: acc._1, acc._2 + 1))._1.reverse()
 
   def partition(pred: A => Boolean): (List[A], List[A]) =
     this.foldRight((Nil(), Nil()))((e, out) => if pred(e) then (e :: out._1, out._2) else (out._1, e :: out._2))
