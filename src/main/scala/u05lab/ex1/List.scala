@@ -70,12 +70,15 @@ enum List[A]:
     case _ => false
 
   /** EXERCISES */
-  def zipRight: List[(A, Int)] =
+  def zipRightRecursive: List[(A, Int)] =
     def _zipRight(l: List[A], i: Int, out: List[(A, Int)]): List[(A, Int)] = l match
       case h :: t =>  out.append((h, i) :: _zipRight(t, i+1, out))
       case _ => Nil()
 
     _zipRight(this, 0, Nil())
+
+  def zipRight: List[(A, Int)] =
+    this.foldLeft(Nil())((s, e) => s.append((e , s.length-1+ 1) :: Nil()))
 
   def partition(pred: A => Boolean): (List[A], List[A]) =
     this.foldRight((Nil(), Nil()))((e, out) => if pred(e) then (e :: out._1, out._2) else (out._1, e :: out._2))
