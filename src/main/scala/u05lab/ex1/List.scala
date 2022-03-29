@@ -109,11 +109,6 @@ enum List[A]:
         ( (s._1._1 , s._1._2.append(e :: Nil())), pred(e))
       else ((s._1._1.append(e :: Nil()), s._1._2), pred(e))
     )._1
-    /*this.foldLeft((Nil(), Nil()))((out, e) =>
-      if ((out._1 != Nil() && pred(out._1.get(out._1.length-1).get) && !pred(e))) || out._2 != Nil() then
-        (out._1, out._2.append(e :: Nil()))
-      else
-        (out._1.append(e :: Nil()), out._2)*/
 
 
   /** @throws UnsupportedOperationException if the list is empty */
