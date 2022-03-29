@@ -98,12 +98,10 @@ enum List[A]:
     case _ => false
 
   def spanRecoursive(pred: A => Boolean): (List[A], List[A]) =
-    def _span (l: List[A], pred: A => Boolean, out: (List[A], List[A])): (List[A], List[A]) = l match
-      case h :: t if (pred(out._1.get(out._1.length-1).get) && !pred(h)) => (out._1, out._2.append(l))
-      case h :: t => _span(t, pred, (out._1.append(h :: Nil()), out._2))
-      case _ => out
-
-    _span(this.tail.get, pred, (this.head.get :: Nil(), Nil()))
+    def _span(l: List[A], pred: A => Boolean, s: (List[A], List[A])): (List[A], List[A]) = l match
+      case h :: t if pred(h) => val next = _span(t, pred, s); (h :: next._1, next._2)
+      case _ => (s._1, l)
+    _span(this, pred, (Nil(), Nil()))
 
   def span(pred: A => Boolean): (List[A], List[A]) =
     this.foldLeft((Nil(), Nil()))((out, e) =>
