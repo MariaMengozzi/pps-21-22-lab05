@@ -1,5 +1,7 @@
 package u05lab.ex2
 
+import java.util.stream.Collectors
+
 enum Question:
   case RELEVANCE,       // ("È importante per questa conferenza?"),
   SIGNIFICANCE, 	// ("Produce contributo scientifico?"),
@@ -28,8 +30,17 @@ class ConferenceReviewImpl extends ConferenceReview:
     val map = Map( RELEVANCE -> r, SIGNIFICANCE -> s, CONFIDENCE-> c, FINAL -> f)
     loadReview(article, map)
 
-  override def orderedScores(article: Int, question: Question): List[Int] = ???
-  override def averageFinalScore(article: Int): Double = ???
+  override def orderedScores(article: Int, question: Question): List[Int] =
+    reviews.filter(_._1 == article)
+      .map(_._2.get(question).get)
+      .sorted
+      .toList
+
+  override def averageFinalScore(article: Int): Double =
+    reviews.filter(_._1 == article)
+      .map(_._2.get(Question.FINAL).get)
+      .sum / reviews.filter(_._1 == article).length
+
   override def acceptedArticles: Set[Int] = ???
   override def sortedAcceptedArticles : List[(Int, Double)] = ???
   override def averageWeightedFinalScore(article: Int): Double = ???

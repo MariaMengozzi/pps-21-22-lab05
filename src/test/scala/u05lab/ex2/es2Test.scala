@@ -33,7 +33,25 @@ class es2Test:
     assertEquals(List((1, Map(RELEVANCE -> 8, SIGNIFICANCE -> 8, CONFIDENCE-> 6, FINAL -> 8))), cr.getReviews)
 
   @Test
-    def testLoadReview2(): Unit =
-      val cr = ConferenceReviewImpl()
-      cr.loadReview(1, Map(RELEVANCE -> 8, SIGNIFICANCE -> 8, CONFIDENCE-> 6, FINAL -> 8))
-      assertEquals(List((1, Map(RELEVANCE -> 8, SIGNIFICANCE -> 8, CONFIDENCE-> 6, FINAL -> 8))), cr.getReviews)
+  def testLoadReview2(): Unit =
+    val cr = ConferenceReviewImpl()
+    cr.loadReview(1, Map(RELEVANCE -> 8, SIGNIFICANCE -> 8, CONFIDENCE-> 6, FINAL -> 8))
+    assertEquals(List((1, Map(RELEVANCE -> 8, SIGNIFICANCE -> 8, CONFIDENCE-> 6, FINAL -> 8))), cr.getReviews)
+
+  @Test
+    def testOrderedScores(): Unit =
+    // l'articolo 2 ha preso su RELEVANCE i due voti 4,9
+    assertEquals(List(4, 9), cr.orderedScores(2, Question.RELEVANCE))
+    // e simile per gli altri
+    assertEquals(List(6,7,8), cr.orderedScores(4, Question.CONFIDENCE))
+    assertEquals(List(10,10), cr.orderedScores(5, Question.FINAL))
+
+  @Test
+    def testAvarageFinalScore(): Unit =
+      // l'articolo 1 ha preso voto medio su FINAL pari a 8.5, con scarto massimo 0.01
+      assertEquals(cr.averageFinalScore(1), 8.5, 0.01);
+      // e simile per gli altri
+      assertEquals(cr.averageFinalScore(2), 7.5, 0.01);
+      assertEquals(cr.averageFinalScore(3), 3.5, 0.01);
+      assertEquals(cr.averageFinalScore(4), 7.0, 0.01);
+      assertEquals(cr.averageFinalScore(5), 10.0, 0.01);
