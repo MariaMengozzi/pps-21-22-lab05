@@ -39,7 +39,7 @@ class ConferenceReviewImpl extends ConferenceReview:
   override def averageFinalScore(article: Int): Double =
     reviews.filter(_._1 == article)
       .map(_._2.get(Question.FINAL).get)
-      .sum / reviews.filter(_._1 == article).length
+      .sum.toDouble / reviews.filter(_._1 == article).length
 
   override def acceptedArticles: Set[Int] = ???
   override def sortedAcceptedArticles : List[(Int, Double)] = ???
