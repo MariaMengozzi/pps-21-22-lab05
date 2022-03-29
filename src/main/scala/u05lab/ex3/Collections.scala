@@ -1,7 +1,8 @@
 package u05lab.ex3
 
-import java.util.concurrent.TimeUnit
+import u05lab.ex3.PerformanceUtils.measure
 
+import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 
 object PerformanceUtils:
